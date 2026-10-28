@@ -19,7 +19,7 @@ CREATE TABLE CLIENTE(
 
     CONSTRAINT UQ_CLIENTE_CPF UNIQUE (cpf)
 );
-GO;
+GO
 
 
 CREATE TABLE ENTREGADOR(
@@ -27,27 +27,28 @@ CREATE TABLE ENTREGADOR(
     nome varchar(100) not null,
     placa_moto char(7) not null
 );
-GO;
+GO
 
 
 CREATE TABLE PIZZA(
    codigo int primary key,
    sabor varchar(50) not null,
    preco decimal(6,2) not null,
+
+   CONSTRAINT ck_pizza_preco CHECK (preco > 0)
 );
-GO;
+GO
 
 
 CREATE TABLE PEDIDO(
    numero int primary key,
-   data date not null,
+   data date DEFAULT GETDATE() not null,
    hora time not null,
    cpf_cliente char(11) not null,
    matricula_entregador int not null,
 
    CONSTRAINT fk_PEDIDO_CLIENTE FOREIGN KEY (cpf_cliente) REFERENCES CLIENTE (cpf),
    CONSTRAINT fk_PEDIDO_ENTREGADOR FOREIGN KEY (matricula_entregador) REFERENCES ENTREGADOR (matricula),
-   CONSTRAINT ck_pedido_data CHECK (data > 0)
 );
 GO
 
@@ -60,7 +61,7 @@ CREATE TABLE ITEM_PEDIDO(
    CONSTRAINT fk_ITEM_PEDIDO_PEDIDO FOREIGN KEY (numero_pedido) REFERENCES PEDIDO (numero),
    CONSTRAINT fk_ITEM_PEDIDO_PIZZA FOREIGN KEY (codigo_pizza) REFERENCES PIZZA (codigo)
 );
-GO;
+GO
 
 
 CREATE TABLE TELEFONE_CLIENTE(
@@ -69,4 +70,4 @@ CREATE TABLE TELEFONE_CLIENTE(
 
    CONSTRAINT fk_TELEFONE_CLIENTE_CLIENTE FOREIGN KEY (cpf_cliente) REFERENCES CLIENTE (cpf)
 );
-GO;
+GO
