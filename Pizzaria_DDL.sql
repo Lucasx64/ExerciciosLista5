@@ -25,7 +25,8 @@ GO
 CREATE TABLE ENTREGADOR(
     matricula int primary key,
     nome varchar(100) not null,
-    placa_moto char(7) not null
+    placa_moto char(7) not null,
+    CONSTRAINT UQ_ENTREGADOR_placa UNIQUE (placa_moto)
 );
 GO
 
@@ -42,7 +43,7 @@ GO
 
 CREATE TABLE PEDIDO(
    numero int primary key,
-   data date DEFAULT GETDATE() not null,
+   data_pedido date DEFAULT GETDATE() not null,
    hora time not null,
    cpf_cliente char(11) not null,
    matricula_entregador int not null,
@@ -71,3 +72,5 @@ CREATE TABLE TELEFONE_CLIENTE(
    CONSTRAINT fk_TELEFONE_CLIENTE_CLIENTE FOREIGN KEY (cpf_cliente) REFERENCES CLIENTE (cpf)
 );
 GO
+
+

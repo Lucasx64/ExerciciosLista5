@@ -30,7 +30,7 @@ CREATE TABLE PRODUTO (
 CREATE TABLE VENDA (
     numero INT NOT NULL PRIMARY KEY,
     codigo_produto VARCHAR(10) NOT NULL, -- <- Segundo erro - deve ser INT ao inves de VARCHAR
-    CONSTRAINT FK_VENDA_PRODUTO FOREIGN KEY (codigo_produto) REFERENCES PRODUTO (codigo) -- <-PRODUTO deve ser no singular
+    CONSTRAINT FK_VENDA_PRODUTO FOREIGN KEY (codigo_produto) REFERENCES PRODUTOS (codigo) -- <-PRODUTO deve ser no singular
 );
 
 
