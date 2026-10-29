@@ -1,107 +1,57 @@
--- criar o banco
-create database Escola;
--- acessar o banco
-use Escola;
+-- Exercicios - Lista 5
 
---Criar tabelas
+--Exercício 1 — Qual comando DDL usar? Para cada situação, diga qual comando resolve (CREATE, ALTER ou DROP) e com qual complemento:
 
-create table ALUNO(
-	matricula int primary key,
-	nome varchar(50) not null,
-	data_nascimento date not null,
-	email varchar(100) not null,
-	Constraint UQ_Aluno_Email unique (email) -- n�o permite emails duplicados
-	-- UQ_Aluno_Email nome da restri��o
-	-- UNIQUE - Unico
-	--(email) coluna que recebe a restri��o
+--Criar o banco Loja.
+CREATE DATABASE Loja;
+----Criar a tabela PRODUTO.
+CREATE TABLE PRODUTO
+----Guardar o estoque do produto, que ninguém lembrou de colocar.
+ALTER TABLE PRODUTO ADD ESTOQUE INT
+----O nome do produto não cabe em VARCHAR(50); precisa de VARCHAR(100).
+ALTER TABLE PRODUTO ADD 
+----Impedir preço negativo numa tabela que já existe.
+ALTER TABLE PRODUTO ADD CONSTRAINT chk_preco_negativo CHECK (preco <= 0)
+----A coluna observacao não é mais usada.
+ALTER TABLE PRODUTO DROP COLUMN Observacao
+----A tabela PRODUTO inteira não é mais necessária.
+--DROP TABLE PRODUTO
+
+
+--Exercício 2 — Encontre os erros. O script abaixo tem 5 erros. Encontre e corrija:
+
+CREATE TABLE PRODUTO (
+    codigo INT NULL,  -- <- Primeiro erro - deve ser NOT NULL
+    descricao VARCHAR(100) NOT NULL, -- <- adicionar a virgula no final do NOT NULL
+    preco DECIMAL(10,2) NOT NULL,
+    CONSTRAINT PK_PRODUTO PRIMARY KEY (codigo),
 );
 
-create table PROFESSOR(
-registro_professor int primary key,
-nome varchar(50) not null,
-email varchar(100) not null unique, -- nao permite emails duplicados FORMA 1
---constraint UQ_Professor_Aluno unique (email) -- n�o permite emails duplicados FORMA 2
-
-);
-
-CREATE TABLE CURSO(
-	codigo_curso int primary key,
-	nome varchar(50) not null unique,
-	carga_horaria smallint not null,
-	registro_professor int not null,
-	constraint fk_curso_aluno foreign key (registro_professor)
-	references ALUNO(matricula),
-
-	-- aceita o registro somente se carga horaria for maior que zero
-	constraint ck_curso_carga CHECK (carga_horaria > 0)
+CREATE TABLE VENDA (
+    numero INT NOT NULL PRIMARY KEY,
+    codigo_produto VARCHAR(10) NOT NULL, -- <- Segundo erro - deve ser INT ao inves de VARCHAR
+    CONSTRAINT FK_VENDA_PRODUTO FOREIGN KEY (codigo_produto) REFERENCES PRODUTOS (codigo) -- <-PRODUTO deve ser no singular
 );
 
 
----COMANDO PARA CONFERIR A ESTRUTURA
---EXEC sp_help 'CURSO';
-
-CREATE TABLE MATRICULA(
-	matricula_aluno int primary key,
-	codigo_curso int not null,
-	data_matricula datetime DEFAULT GETDATE(),
-
-	CONSTRAINT fk_matricula_codigo_curso FOREIGN KEY (codigo_curso)
-	REFERENCES CURSO (codigo_curso)
-
-);
-
-CREATE TABLE ESPECIALIDADE_PROFESSOR(
-	registro_professor int not null,
-	especialidade varchar(50) not null,
-
-	constraint pk_especialidade_professor
-	primary key (registro_professor, especialidade),
-	
-	constraint fk_especialidade_professor
-	foreign key (registro_professor)
-	references PROFESSOR(registro_professor)
-
-);
+--**Exercício 3 — ALTER TABLE.** No banco Escola, escreva os comandos para:
 
 Use Escola;
-GO
 
--- Aula DDL ( CREATE, ALTER, DROP )
--- Aula DML ( INSERT, UPDATE, DELETE )
-
-
-INSERT INTO PROFESSOR (registro_professor, nome, email)
-VALUES ( 1030, 'Lucas', 'lucas@gmail.com'),
-       ( 1040, 'Vinio', 'vinio@gmail.com'),
-	   ( 1050, 'Guilherme', 'guilherme@gmail.com')
-
-
--- Exibir dados da tabela
--- select * from professor
--- * = todas as colunas
-
-select * from PROFESSOR
-
-INSERT INTO ESPECIALIDADE_PROFESSOR (registro_professor, especialidade)  -- <-- Não é permitido que se repita uma PK.
-VALUES (1040, 'C#')
-
-SELECT * FROM ESPECIALIDADE_PROFESSOR
+--1. Adicionar a coluna **cpf** CHAR(11) NULL em ALUNO.
+ALTER TABLE ALUNO ADD cpf CHAR(11) NULL;
+--2. Garantir que o cpf do aluno não se repita.
+ALTER TABLE ALUNO ADD CONSTRAINT UQ_ALUNO_CPF UNIQUE (cpf);
+--3. Aumentar o nome do curso para VARCHAR(120).
+ALTER TABLE CURSO ALTER COLUMN nome VARCHAR(120) NOT NULL;
+--4. Garantir que a data_nascimento do aluno seja menor que a data de hoje.
+ALTER TABLE ALUNO ADD CONSTRAINT CK_data_nascimento CHECK (data_nascimento < GETDATE());
+--5. Remover a coluna cpf.
+ALTER TABLE ALUNO DROP CONSTRAINT UQ_ALUNO_CPF;
+ALTER TABLE ALUNO DROP COLUMN cpf;
 
 
--- Apagar dados
-
-DELETE FROM PROFESSOR WHERE registro_professor = 1030 -- <- vai dar erro pois não é permitido apagar coluna pai sem antes excluir as filhas.
-
--- Atualizar dados
-
-UPDATE PROFESSOR SET nome = 'Lucas Aragão' -- <- Está errado, pois irá alterar o nome de todas as colunas. Necessário utilizar WHERE.
 
 
-SELECT * FROM PROFESSOR
-
-ROLLBACK -- <- Para desfazer codigos inseridos de forma erronea.
-
-COMMIT -- <- Para fechar o banco.
 
 
-UPDATE PROFESSOR SET nome = 'Guilherme da Silva' WHERE registro_professor = 1050 -- <- Corrigindo
