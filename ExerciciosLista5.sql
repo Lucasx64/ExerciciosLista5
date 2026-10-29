@@ -96,8 +96,12 @@ DELETE FROM PROFESSOR WHERE registro_professor = 1030 -- <- vai dar erro pois n�
 
 UPDATE PROFESSOR SET nome = 'Lucas Aragão' -- <- Está errado, pois irá alterar o nome de todas as colunas. Necessário utilizar WHERE.
 
+
 SELECT * FROM PROFESSOR
 
 ROLLBACK -- <- Para desfazer codigos inseridos de forma erronea.
+
+COMMIT -- <- Para fechar o banco.
+
 
 UPDATE PROFESSOR SET nome = 'Guilherme da Silva' WHERE registro_professor = 1050 -- <- Corrigindo
